@@ -1,16 +1,17 @@
-# Задача
+usage: training.py [-h] [--epochs EPOCHS] [--mirror MIRROR] [--save_ds SAVE_DS] [--batch BATCH]
 
-**Требуется:** предложить модель, сегментирующую окурок сигареты на фотографии.  
-  
-**Вход:** фотография 512x512x3.  
-**Выход:** маска окурка сигареты 512x512.  
-**Метрика:** [Dice coefficient](https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient).  
+Parameters for training model: number of epochs and access to several GPUs
 
-# Данные
+optional arguments:
+  -h, --help         show this help message and exit
+  --epochs EPOCHS    The number of epoch for training
+  --mirror MIRROR    if device has several GPUs then mirror strategy distributes training among it
+  --save_ds SAVE_DS  save datasets after creating for speed up in next training
+  --batch BATCH      the size of batch during training
 
-Ссылка на скачивание данных: [link](https://www.immersivelimit.com/datasets/cigarette-butts).
+Link for download data: [link](https://www.immersivelimit.com/datasets/cigarette-butts).
 
-Данные представляют из себя набор синтетически сгенерированных фотографий окурков сигарет и маски, определяющей их на фотографии, а также координаты ограничивающего их бокса.
+If you are using Ubuntu 22.04
 
 Доступные данные разделены на несколько папок:  
 - `real_test` содержит фотографии 512x512x3;  
