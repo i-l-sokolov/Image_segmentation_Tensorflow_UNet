@@ -1,39 +1,72 @@
-# Добро пожаловать на отбор на стажировку в Лабораторию Машинного Интеллекта МФТИ!
-С 13 по 19 февраля (23:59) вам предстоит решить задачу и оформить её решение в своём репозитории на git. Мы решили сделать тестовое задание в виде мини полезного проекта. Опыт, полученный в результате его решения поможет вам в дальнейшей работе в лаборатории.
-Любые вопросы вы можете задавать на почту **internship@mipt.ai** с темой "Feb2020_question_Фамилия", расписывая всё максимально подробно. 
+# Cigarette Butt Detection
 
+This repository contains the code for detecting cigarette butts in images using TensorFlow.
 
-Подробнее с информацией о лаборатории и технологиях можете ознакомиться на сайте лаборатории http://mipt.ai/technology
+## Download Data
 
-# InternshipTestTasks
+You can download the cigarette butt dataset from the following link:
 
-Список доступных для решения задач:  
+[https://www.immersivelimit.com/datasets/cigarette-butts](https://www.immersivelimit.com/datasets/cigarette-butts)
 
-- `cigarette_butt_segmentation` (Computer Vision) - предложить модель сегментации окурков сигарет. 
+## Environment
 
-# Критерии оценивания
+To set up the required environment, you can use the following `tf_environment.yml` file:
 
-В первую очередь нам важно оценить, как вы мыслите. Для этого максимально подробно комментируйте свои действия и полученные результаты. Будут оцениваться:
+```bash
+conda env create -f tf_environment.yml
+```
 
-1. Ваши идеи по используемым методам и моделям
+## Training Model
+To train the model, you can use the training.py script. Here are the available parameters:
 
-2. Подготовка данных
+```bash
+usage: training.py [-h] [--epochs EPOCHS] [--mirror MIRROR] [--save_ds SAVE_DS] [--batch BATCH]
 
-3. Чистота кода, оформление репозитория
+Parameters for training model: number of epochs and access to several GPUs
 
-4. Анализ полученных результатов и значения метрик
+optional arguments:
+  -h, --help         show this help message and exit
+  --epochs EPOCHS    The number of epoch for training
+  --mirror MIRROR    if device has several GPUs then mirror strategy distributes training among it
+  --save_ds SAVE_DS  save datasets after creating for speed up in next training
+  --batch BATCH      the size of batch during training
+```
 
-В каждой задаче каждый критерий будет иметь свой вес, но везде оценка по 5-балльной шкале:
+You can adjust the values of these parameters according to your needs. For example, to train the model for 20 epochs with a batch size of 16 and using mirror strategy, you can use the following command:
+```bash
+python training.py --epochs 20 --batch 16 --mirror True
+```
+The training will choose the best model over all batches and save it in the models
 
-| Критерий| 1 балл | 5 баллов |
-|---------------|---------------------------------------|--------------------|
-|Идеи			|не проведён обзор литературы|описаны статьи, проведён анализ моделей и подобрана подходящая модель|
-|Препроцессинг	|нет понимания, что за данные и как с ними работать|препроцессинг данных проведён и обоснован, проведен анализ данных|
-|Чистота кода	|всё написано в одном .ipynb без комментариев|PEP8, проект разбит на .py скрипты и собирается в демо-ноутбуке|
-|Метрики		|совсем плохие результаты|адекватно работает на реальных/тестовых данных, проведен анализ результатов|
+## Demo
+The more detailed demo could be found in the notebook demo.ipynb. There are three examples:
 
+![prediction](pics/output.png)
+![prediction1](pics/output1.png)
+![prediction2](pics/output2.png)
 
- 
+On the validation data, a dice score of 0.96 was achieved.
 
-Успехов! Будем с нетерпением ждать ваших коммитов. После решения тестового задания, пожалуйста, дайте ссылку на него [в ЭТОЙ гугл форме](https://docs.google.com/forms/d/e/1FAIpQLSd2fve0y1wicir9izQBzN4FBgz7qNBBZPE2lDBFSQvINVbSXQ/viewform?usp=sf_link). 
+You can load the best model and use it in your own code using the following code:
 
+```python
+import tensorflow as tf
+
+model = tf.keras.models.load_model('models/model_undet.h5')
+# Use the model to make predictions on new images
+```
+
+## Ubuntu 22.04
+Please note that TensorFlow currently only supports Ubuntu 20.04 and Ubuntu 18.04. If you are using Ubuntu 22.04, you may encounter issues with TensorFlow installation. In this case, you should do:
+
+``` bash 
+conda install -c nvidia cuda-nvcc=11.3.58
+
+mkdir -p $CONDA_PREFIX/etc/conda/activate.d
+printf 'export XLA_FLAGS=--xla_gpu_cuda_data_dir=$CONDA_PREFIX/lib/\n' >> $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh
+source $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh
+
+mkdir -p $CONDA_PREFIX/lib/nvvm/libdevice
+cp $CONDA_PREFIX/lib/libdevice.10.bc $CONDA_PREFIX/lib/nvvm/libdevice/
+This should resolve any installation issues with TensorFlow on Ubuntu 22.04.
+```
